@@ -289,15 +289,16 @@ class Solver(object):
                 # Target-to-original domain.
                 x_reconst = self.G(x_fake, c_org)
                 g_loss_rec = torch.mean(torch.abs(x_real - x_reconst))
-                # Triple consistency loss. 
-                #x_third = self.G(x_fake, c_third)
-                #x_third_real = self.G(x_real, c_third)
-                #g_loss_triple = torch.mean(torch.abs(x_third - x_third_real))
+                # ================================================================================#
+                #                               Triple consistency loss.                          #
+                # ================================================================================#
+                x_third = self.G(x_fake, c_third)
+                x_third_real = self.G(x_real, c_third)
+                g_loss_triple = torch.mean(torch.abs(x_third - x_third_real))
 
 
                 # Backward and optimize.
-                #g_loss = g_loss_fake + self.lambda_rec * (g_loss_rec + g_loss_triple) + self.lambda_cls * g_loss_cls
-                g_loss = g_loss_fake + self.lambda_rec * g_loss_rec + self.lambda_cls * g_loss_cls
+                g_loss = g_loss_fake + self.lambda_rec * (g_loss_rec + g_loss_triple) + self.lambda_cls * g_loss_cls
                 self.reset_grad()
                 g_loss.backward()
                 self.g_optimizer.step()
