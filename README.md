@@ -1,6 +1,5 @@
 ## StarGAN with a triple consistency loss
 
---------------------------------------------------------------------------------
 This is the modified training of StarGAN using a triple consistency loss, as presented in our [preprint](https://arxiv.org/pdf/1811.03492.pdf). 
 
 Should you use the code please cite the original StarGAN paper (of course!), as well as our pre-print. For further details on how to use the StarGAN, please refer to the [original repository](https://github.com/yunjey/stargan)
