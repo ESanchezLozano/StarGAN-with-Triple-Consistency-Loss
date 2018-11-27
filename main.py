@@ -49,6 +49,11 @@ def main(config):
             solver.test()
         elif config.dataset in ['Both']:
             solver.test_multi()
+    elif config.mode == 'progressive':
+        if config.dataset in ['CelebA', 'RaFD']:
+            solver.test_progressive()
+        elif config.dataset in ['Both']:
+            solver.test_multi()
 
 
 if __name__ == '__main__':

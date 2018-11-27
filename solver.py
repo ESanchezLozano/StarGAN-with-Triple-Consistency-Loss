@@ -562,6 +562,37 @@ class Solver(object):
                 save_image(self.denorm(x_concat.data.cpu()), result_path, nrow=1, padding=0)
                 print('Saved real and fake images into {}...'.format(result_path))
 
+    def test_progressive(self):
+        """Translate images using StarGAN trained on a single dataset."""
+        # Load the trained generator.
+        self.restore_model(self.test_iters)
+        
+        # Set data loader.
+        if self.dataset == 'CelebA':
+            data_loader = self.celeba_loader
+        elif self.dataset == 'RaFD':
+            data_loader = self.rafd_loader
+        
+        with torch.no_grad():
+            for i, (x_real, c_org) in enumerate(data_loader):
+
+                # Prepare input images and target domain labels.
+                x_real = x_real.to(self.device)
+                c_trg_list = self.create_labels(c_org, self.c_dim, self.dataset, self.selected_attrs)
+
+                x_fake_list = [x_real]
+                out = x_real
+                # Translate images.
+                for c_trg in c_trg_list:
+                    out = self.G(out,c_trg)
+                    x_fake_list.append(out)
+
+                # Save the translated images.
+                x_concat = torch.cat(x_fake_list, dim=3)
+                result_path = os.path.join(self.result_dir, '{}-images.jpg'.format(i+1))
+                save_image(self.denorm(x_concat.data.cpu()), result_path, nrow=1, padding=0)
+                print('Saved real and fake images into {}...'.format(result_path))
+
     def test_multi(self):
         """Translate images using StarGAN trained on multiple datasets."""
         # Load the trained generator.
