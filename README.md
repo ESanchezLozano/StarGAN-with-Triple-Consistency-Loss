@@ -4,6 +4,8 @@ This is the modified training of StarGAN using a triple consistency loss, as pre
 
 Should you use the code please cite the original StarGAN paper (of course!), as well as our pre-print. For further details on how to use the StarGAN, please refer to the [original repository](https://github.com/yunjey/stargan)
 
+Should you want to check the progressive image generation, please set config = 'progressive' (see main.py for further details). It has only been implemented for the single-dataset case.
+
 <p align="center"><img width="100%" src="jpg/StarGAN_pp2.png" /></p>
 
 
