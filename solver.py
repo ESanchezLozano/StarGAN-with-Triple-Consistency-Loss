@@ -204,7 +204,7 @@ class Solver(object):
             self.restore_model(self.resume_iters)
 
         # Start training.
-        print('Start training...')
+        print('Start training kike...')
         start_time = time.time()
         for i in range(start_iters, self.num_iters):
 
@@ -223,9 +223,13 @@ class Solver(object):
             rand_idx = torch.randperm(label_org.size(0))
             label_trg = label_org[rand_idx]
 
+            rand_idx = torch.randperm(label_org.size(0))
+            label_third = label_org[rand_idx]
+
             if self.dataset == 'CelebA':
                 c_org = label_org.clone()
                 c_trg = label_trg.clone()
+                c_third = label_third.clone()
             elif self.dataset == 'RaFD':
                 c_org = self.label2onehot(label_org, self.c_dim)
                 c_trg = self.label2onehot(label_trg, self.c_dim)
@@ -233,8 +237,10 @@ class Solver(object):
             x_real = x_real.to(self.device)           # Input images.
             c_org = c_org.to(self.device)             # Original domain labels.
             c_trg = c_trg.to(self.device)             # Target domain labels.
+            c_third = c_third.to(self.device)
             label_org = label_org.to(self.device)     # Labels for computing classification loss.
             label_trg = label_trg.to(self.device)     # Labels for computing classification loss.
+            label_third = label_third.to(self.device)
 
             # =================================================================================== #
             #                             2. Train the discriminator                              #
@@ -283,8 +289,14 @@ class Solver(object):
                 # Target-to-original domain.
                 x_reconst = self.G(x_fake, c_org)
                 g_loss_rec = torch.mean(torch.abs(x_real - x_reconst))
+                # Triple consistency loss. 
+                #x_third = self.G(x_fake, c_third)
+                #x_third_real = self.G(x_real, c_third)
+                #g_loss_triple = torch.mean(torch.abs(x_third - x_third_real))
+
 
                 # Backward and optimize.
+                #g_loss = g_loss_fake + self.lambda_rec * (g_loss_rec + g_loss_triple) + self.lambda_cls * g_loss_cls
                 g_loss = g_loss_fake + self.lambda_rec * g_loss_rec + self.lambda_cls * g_loss_cls
                 self.reset_grad()
                 g_loss.backward()
